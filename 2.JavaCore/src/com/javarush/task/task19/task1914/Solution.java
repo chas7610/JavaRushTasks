@@ -35,7 +35,6 @@ public class Solution {
                 break;
             }
         }
-
     }
 
     public static class TestString {
