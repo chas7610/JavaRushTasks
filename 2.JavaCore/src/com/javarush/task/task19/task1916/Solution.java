@@ -1,14 +1,10 @@
 package com.javarush.task.task19.task1916;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-/* 
+/*
 Отслеживаем изменения
 */
 
@@ -20,28 +16,48 @@ public class Solution {
         String fName1 = reader.readLine();
         String fName2 = reader.readLine();
         reader.close();
-
         BufferedReader fileReader1 = new BufferedReader(new FileReader(fName1));
         BufferedReader fileReader2 = new BufferedReader(new FileReader(fName2));
-        String line1 = "";
-        String line2 = "";
 
-        while ((line1 = fileReader1.readLine()) != null | (line2 = fileReader2.readLine()) != null){
-            if (line1 == null) line1 = "";
-            if (line2 == null) line2 = "";
-            if (line1.equals(line2))
-                lines.add(new LineItem(Type.SAME,line1));
-            else if (line2.length() == 0)
-                lines.add(new LineItem(Type.REMOVED,line1));
-            else if (line1.length() == 0)
-                lines.add(new LineItem(Type.ADDED,line2));
-        }
+        List<String> list1 = new ArrayList<>();
+        List<String> list2 = new ArrayList<>();
+        while (fileReader1.ready())
+            list1.add(fileReader1.readLine());
+        while (fileReader2.ready())
+            list2.add(fileReader2.readLine());
+
         fileReader1.close();
         fileReader2.close();
 
+        while (list1.size()>0 && list2.size()>0) {
+            if (list1.get(0).equals(list2.get(0)))
+            {
+                lines.add(new LineItem(Type.SAME,list1.get(0)));
+                list1.remove(0);
+                list2.remove(0);
+            }
+            else {
+                if (list1.get(0).equals(list2.get(1))){
+                    lines.add(new LineItem(Type.ADDED,list2.get(0)));
+                    list2.remove(0);
+                }else {
+                    lines.add(new LineItem(Type.REMOVED,list1.get(0)));
+                    list1.remove(0);
+                }
+            }
+        }
+        while (list1.size() + list2.size() > 0){
+            if (list1.size() > 0) {
+                lines.add(new LineItem(Type.REMOVED, list1.get(0)));
+                list1.remove(0);
+            }
+            if (list2.size() > 0) {
+                lines.add(new LineItem(Type.ADDED, list2.get(0)));
+                list2.remove(0);
+            }
+        }
         for (LineItem item : lines)
             System.out.println(item);
-
     }
 
 
@@ -63,6 +79,7 @@ public class Solution {
         @Override
         public String toString() {
             return this.type + " " + this.line;
+//            return this.type.toString();
         }
     }
 }
